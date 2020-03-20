@@ -153,14 +153,22 @@ def folder_parser(tex_dir, config):
     print("\n\nChecking for unused files")
     # Second pass through project to check on missing files
     unused_files = 0
+    unused_images = []
     for file_path in all_files:
         if not match_filename(referenced_files, file_path):
             print(file_path)
             unused_files += 1
+            if file_path.endswith('.png') or file_path.endswith('.jpg'):
+                unused_images.append(file_path)
     
     print("Done.")
     print(unused_files, "potentially unused files.")
     print(bytes_saved / 1000000, "Mb saved by optimising images.")
+
+    choice = input("Warning IRREVERSIBLE: Remove potentially unused image files ('.png' and '.jpg')?\n'y' or 'n': ")
+    if choice == 'y':
+        for file_path in unused_images:
+            os.remove(file_path)
 
 # =========================================================================
 def parse_args():
