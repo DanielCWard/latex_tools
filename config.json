@@ -1,0 +1,26 @@
+{
+    "compress_images": true,
+    "compression_quality": 80,
+    "largest_size": [
+        800,
+        800
+    ],
+    "image_resize_dimension": -1,
+    "optimize_compression": true,
+    "remove_comments": true,
+    "resize_images": true,
+    "ignore_files": ["test1.png", "test2.png"],
+    "ignore_filetypes": [".bst", ".bib", ".cls", ".sty"],
+    "special_cases": {
+        "special.png":{
+            "compress_images": true,
+            "compression_quality": 80,
+            "largest_size": [
+                800,
+                800
+            ],
+            "optimize_compression": true,
+            "remove_comments": true,
+            "resize_images": true}
+    }
+}
