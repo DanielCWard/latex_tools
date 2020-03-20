@@ -8,7 +8,7 @@
     "image_resize_dimension": -1,
     "optimize_compression": true,
     "remove_comments": true,
-    "resize_images": true,
+    "resize_images": false,
     "ignore_files": ["test1.png", "test2.png"],
     "ignore_filetypes": [".bst", ".bib", ".cls", ".sty"],
     "special_cases": {

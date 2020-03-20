@@ -1,3 +1,82 @@
+def get_file_from_input(line):
+    """
+    Returns the file path from line containing the \input latex command
+
+    @param line: a line from a file as a string
+    @return: the path to the file
+    """
+    start_idx = -1
+    for i, char in enumerate(line):
+        if char == '{':
+            start_idx = i
+            break
+    
+    line = line[start_idx+1:]
+    new_end = -1
+    for i, char in enumerate(line):
+        if char == '}':
+            new_end = i
+            break
+
+    line = line[:new_end]
+    return line
+
+    # First remove the tail of the line if any
+    # new_end = -1
+    # for i, char in enumerate(line):
+    #     if char == '}':
+    #         new_end = i
+    #         break
+    # line = line[:new_end]
+
+    # line.replace('\\input{', '')
+    # line.replace('}', '')
+    # return line
+
+def get_file_from_includegraphics(line):
+    """
+    Returns the file path from line containing the \includegraphics latex command
+
+    @param line: a line from a file as a string
+    @return: the path to the file
+    """
+    start_idx = -1
+    for i, char in enumerate(line):
+        if char == '{':
+            start_idx = i
+            break
+    
+    line = line[start_idx+1:]
+    new_end = -1
+    for i, char in enumerate(line):
+        if char == '}':
+            new_end = i
+            break
+
+    line = line[:new_end]
+    return line
+
+def get_referenced_files(file_lines):
+    """
+    Gets a list of filenames or relative paths of images and files which are used in the doc
+    This allows one to delete figures which are not used
+
+    At present this function only checks for files based on \input and \includegraphics
+
+    ideally this function should utilize the functions of a latex compiler
+
+    @param file_lines: a list of strings for lines in the file
+    @return a list of filenames / paths
+    """
+    referenced_files = []
+    for line in file_lines:
+        if '\input' in line:
+            referenced_files.append(get_file_from_input(line))
+        elif '\includegraphics' in line:
+            referenced_files.append(get_file_from_includegraphics(line))
+    
+    return referenced_files
+
 def line_cleaner(line):
     """
     Removes anything after a '%' unless it is escaped '\%'.
@@ -57,6 +136,7 @@ if __name__ == '__main__':
     
     f_path = 'ycviu-template-with-authorship-referees.tex'
     f_lines = load_file_lines(f_path)
+    print(get_referenced_files(f_lines))
     clean_lines = comment_cleaner(f_lines)
     s_path = f_path.replace('.tex', '-clean.tex')
     save_file_lines(clean_lines, s_path)

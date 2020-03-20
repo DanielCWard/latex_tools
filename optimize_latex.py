@@ -50,6 +50,7 @@ def optimise_image(image_path, config):
     @param image_path: the path to the image file
     @param config: the config parameters for this file
     """
+    file_size = os.path.getsize(image_path)
     if config['compress_images'] or config['resize_images']:
         img = imgProc.load_image(image_path)
         if config['resize_images']:
@@ -63,7 +64,12 @@ def optimise_image(image_path, config):
             imgProc.save_compressed(img, image_path, 
                                     quality=100,
                                     optimize=config['optimize_compression'])
+    
+    print("Original file size (mb):", file_size / 1000000)
+    new_size = os.path.getsize(image_path)
+    print("Optimised file size (mb):", new_size / 1000000)
 
+    return file_size - new_size
 
 def optimise_file(file_path, config):
     """
@@ -77,6 +83,15 @@ def optimise_file(file_path, config):
         clean_lines = texProc.comment_cleaner(file_lines)
         texProc.save_file_lines(clean_lines, file_path)
 
+def match_filename(referenced_files, file_path):
+    """
+    Attemps to see if the file_path or name is in the referenced files
+    """
+    for rf in referenced_files:
+        if os.path.basename(file_path) in rf:
+            return True
+
+    return False
  
 def folder_parser(tex_dir, config):
     """
@@ -86,9 +101,17 @@ def folder_parser(tex_dir, config):
     @param tex_dir: path to the directory to parse
     """
     all_files = list_files(tex_dir)
-    for file_path in all_files:
+    referenced_files = []
+    bytes_saved = 0
 
+    for file_path in all_files:
         ext = os.path.splitext(file_path)[-1]
+
+        # If it is a tex file track the referenced files
+        if ext == '.tex':
+            file_lines = texProc.load_file_lines(file_path)
+            referenced_files.extend(texProc.get_referenced_files(file_lines))
+
         if ext in config["ignore_filetypes"]:
             print("Skipping based on filetype:", file_path)
             continue
@@ -112,7 +135,8 @@ def folder_parser(tex_dir, config):
         # If image we can process file as an image
         if ext.lower() in OPTIMISABLE_IMAGES:
             print("Optimising image file:", file_path)
-            optimise_image(file_path, file_optimisation_parameters)
+            reduction_in_filesize = optimise_image(file_path, file_optimisation_parameters)
+            bytes_saved += reduction_in_filesize
         
         # If file we can process process as a file
         elif ext.lower() in OPTIMISABLE_FILES:
@@ -125,6 +149,18 @@ def folder_parser(tex_dir, config):
 
         # Add blank space between files
         print('\n')
+    
+    print("\n\nChecking for unused files")
+    # Second pass through project to check on missing files
+    unused_files = 0
+    for file_path in all_files:
+        if not match_filename(referenced_files, file_path):
+            print(file_path)
+            unused_files += 1
+    
+    print("Done.")
+    print(unused_files, "potentially unused files.")
+    print(bytes_saved / 1000000, "Mb saved by optimising images.")
 
 # =========================================================================
 def parse_args():

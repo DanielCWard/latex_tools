@@ -16,4 +16,3 @@ Use the provided config.json as a guide. You can provide parameters for specific
 * PIL >= v5.1.0
 
 # TODO
-* [] Add a parser which checks if files are not referenced in the tex files and remove them
