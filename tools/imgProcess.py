@@ -4,6 +4,7 @@ Save on PDF size by downsampling images
 These processes are done in this file
 """
 from PIL import Image
+import os
 
 # Enable large images being processed
 Image.MAX_IMAGE_PIXELS = None
@@ -74,6 +75,37 @@ def save_compressed(img, img_path, quality=80, optimize=True):
     @param optimize: Engage optimisation or not. Default: True
     """
     img.save(img_path, quality=quality,optimize=optimize)
+
+def alpha_to_color(image, color=(255, 255, 255)):
+    """Alpha composite an RGBA Image with a specified color.
+
+    Source: http://stackoverflow.com/a/9459208/284318
+
+    Keyword Arguments:
+    image -- PIL RGBA Image object
+    color -- Tuple r, g, b (default 255, 255, 255)
+
+    """
+    image.load()  # needed for split()
+    background = Image.new('RGB', image.size, color)
+    background.paste(image, mask=image.split()[3])  # 3 is the alpha channel
+    return background
+
+def convert_to_jpg(img_path):
+    """
+    Checks if an image is in the jpg format, if not converts it to jpg to save space
+
+    @param img_path: the path to the image
+    @return the new image path
+    """
+    if not os.path.splitext(img_path)[-1].lower() in ['.jpg', '.jpeg']:
+        img = load_image(img_path)
+        if len(img.split()) >= 4:
+            img = alpha_to_color(img)
+        img_path = img_path.replace(os.path.splitext(img_path)[-1], '.jpg')
+        img.save(img_path)
+    
+    return img_path
 
 if __name__ == '__main__':
     img_path = '/home/daniel/random/texTools/synthetic_overView.png'

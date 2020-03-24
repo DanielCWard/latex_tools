@@ -64,6 +64,9 @@ def optimise_image(image_path, config):
             imgProc.save_compressed(img, image_path, 
                                     quality=100,
                                     optimize=config['optimize_compression'])
+
+    if config['images_to_jpg']:
+        image_path = imgProc.convert_to_jpg(image_path)
     
     print("Original file size (mb):", file_size / 1000000)
     new_size = os.path.getsize(image_path)

@@ -16,3 +16,6 @@ Use the provided config.json as a guide. You can provide parameters for specific
 * PIL >= v5.1.0
 
 # TODO
+* Use pikePDF or something similar to do pdf downsampling for cases when pdf is used for images
+* handle vector graphics 
+* Check for unused files properly

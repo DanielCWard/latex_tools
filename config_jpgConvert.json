@@ -1,14 +1,14 @@
 {
     "images_to_jpg": true,
-    "compress_images": true,
-    "compression_quality": 80,
+    "compress_images": false,
+    "compression_quality": 100,
     "largest_size": [
         800,
         800
     ],
     "image_resize_dimension": -1,
-    "optimize_compression": true,
-    "remove_comments": true,
+    "optimize_compression": false,
+    "remove_comments": false,
     "resize_images": false,
     "ignore_files": ["test1.png", "test2.png"],
     "ignore_filetypes": [".bst", ".bib", ".cls", ".sty"],
